@@ -15,10 +15,10 @@ const sigHashAlg = 'sha256';
 app.get('/portfolio-4ndXZIY9X1', (req, res) => {
   res.status(200).send('Request body was signed');
   git_pull('portfolio-v2');
-  // build_prj('portfolio-v2');
+  build_prj('portfolio-v2');
 });
 
-app.post('/ytuploads-xaN8TzzEfr', verifyPostData, (req, res) => {
+app.post('/ytchannel-uploads-xaN8TzzEfr', verifyPostData, (req, res) => {
   res.status(200).send('Request body was signed');
   git_pull('ytubechannel-uploads');
   build_prj('ytubechannel-uploads');
@@ -27,10 +27,6 @@ app.post('/ytuploads-xaN8TzzEfr', verifyPostData, (req, res) => {
 app.post('/friend-movie-recommend-TOpubfNSeR', verifyPostData, (req, res) => {
   res.status(200).send('Request body was signed');
   git_pull('friend-movie-recommend');
-});
-
-app.post('/sampleprj', (req, res) => {
-  res.status(200).send('Request body was signed');
 });
 
 app.use((err, req, res, next) => {
@@ -64,7 +60,7 @@ function verifyPostData(req, res, next) {
   }
 
   const sig = Buffer.from(req.get(sigHeaderName) || '', 'utf8');
-  const hmac = crypto.createHmac(sigHashAlg, PROCESS.ENV.SECRET);
+  const hmac = crypto.createHmac(sigHashAlg, process.env.SECRET);
   const digest = Buffer.from(
     sigHashAlg + '=' + hmac.update(req.rawBody).digest('hex'),
     'utf8'
