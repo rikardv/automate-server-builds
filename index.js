@@ -44,12 +44,15 @@ function verifyPostData(req, res, next) {
   return next();
 }
 
+let should_build = true;
+
 function git_pull(repo) {
   console.log(`pulling ${repo} from git...`);
   try {
-    var pull = execSync(`git -C ../${repo} pull`).toString();
+    var pull = execSync(`git -C ../${repo} pull origin master`).toString();
     console.log(pull);
   } catch (err) {
+    should_build = false;
     console.log(`git pull from ${repo} failed...`);
   }
 }
@@ -72,7 +75,9 @@ function build_prj(repo) {
 app.post('/portfolio-4ndXZIY9X1', verifyPostData, function (req, res) {
   res.status(200).send('Request body was signed');
   git_pull('portfolio-v2');
+  if (should_build){
   build_prj('portfolio-v2');
+};
 });
 
 app.post('/ytchannel-uploads-xaN8TzzEfr', verifyPostData, function (req, res) {
