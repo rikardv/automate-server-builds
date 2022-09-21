@@ -12,36 +12,6 @@ const port = 3003;
 const sigHeaderName = 'X-Hub-Signature-256';
 const sigHashAlg = 'sha256';
 
-app.get('/portfolio-4ndXZIY9X1', (req, res) => {
-  res.status(200).send('Request body was signed');
-  git_pull('portfolio-v2');
-  build_prj('portfolio-v2');
-});
-
-app.post('/ytchannel-uploads-xaN8TzzEfr', verifyPostData, (req, res) => {
-  res.status(200).send('Request body was signed');
-  git_pull('ytubechannel-uploads');
-  build_prj('ytubechannel-uploads');
-});
-
-app.post('/friend-movie-recommend-TOpubfNSeR', verifyPostData, (req, res) => {
-  res.status(200).send('Request body was signed');
-  git_pull('friend-movie-recommend');
-});
-
-app.use((err, req, res, next) => {
-  if (err) console.error(err);
-  res.status(403).send('Request body was not signed or verification failed');
-});
-
-app.get('*', (req, res) => {
-  res.status(404).send('no found');
-});
-
-app.listen(port, () => {
-  console.log(`automate build script listening on port ${port}`);
-});
-
 // Saves a valid raw JSON body to req.rawBody
 // Credits to https://stackoverflow.com/a/35651853/90674
 app.use(
@@ -87,9 +57,9 @@ function git_pull(repo) {
 function build_prj(repo) {
   console.log(`building the ${repo} app...`);
   var cmd = `cd ../${repo}/client
-    npm install
-    npm run build
-    `;
+      npm install
+      npm run build
+      `;
 
   try {
     var build = execSync(cmd).toString();
@@ -98,3 +68,37 @@ function build_prj(repo) {
     console.log(`npm run build for ${repo} failed...`);
   }
 }
+
+app.post('/portfolio-4ndXZIY9X1', verifyPostData, function (req, res) {
+  res.status(200).send('Request body was signed');
+  git_pull('portfolio-v2');
+  build_prj('portfolio-v2');
+});
+
+app.post('/ytchannel-uploads-xaN8TzzEfr', verifyPostData, function (req, res) {
+  res.status(200).send('Request body was signed');
+  git_pull('ytubechannel-uploads');
+  build_prj('ytubechannel-uploads');
+});
+
+app.post(
+  '/friend-movie-recommend-TOpubfNSeR',
+  verifyPostData,
+  function (req, res) {
+    res.status(200).send('Request body was signed');
+    git_pull('friend-movie-recommend');
+  }
+);
+
+app.get('*', (req, res) => {
+  res.status(404).send('no found');
+});
+
+app.use((err, req, res, next) => {
+  if (err) console.error(err);
+  res.status(403).send('Request body was not signed or verification failed');
+});
+
+app.listen(port, () => {
+  console.log(`automate build script listening on port ${port}`);
+});
